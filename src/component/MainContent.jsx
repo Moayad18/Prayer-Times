@@ -137,7 +137,7 @@ export default function MainContent() {
     if (remainingTime < 0) {
       const midNightDiff = moment("23:59:59", "hh:mm:ss").diff(momentNow);
       const fajrTomidnightDiff = nextPrayerTimeMoment.diff(
-        moment("00:00:00", "hh:mm:ss").diff(momentNow)
+        moment("00:00:00", "hh:mm:ss")
       );
       const totalDiff = midNightDiff + fajrTomidnightDiff;
       remainingTime = totalDiff;
