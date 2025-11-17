@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Prayer from "./Prayer";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import "moment/dist/locale/ar-dz";
@@ -12,24 +11,22 @@ import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
+import { prayerTimeApi } from "../sliceReducer/TimePrayReducer";
+import { useDispatch, useSelector } from "react-redux";
+
 moment.locale("ar");
 
 export default function MainContent() {
   // STATES
   const [nextPrayerIndex, setNextPrayerIndex] = useState(0);
-  const [timings, setTimings] = useState({
-    Fajr: "04:29",
-    Dhuhr: "11:42",
-    Asr: "15:07",
-    Maghrib: "17:40",
-    Isha: "18:51",
-  });
   const [selectedCity, setSelectedCity] = useState({
     displayName: "مكة المكرمة",
     apiName: "Makkah",
   });
   const [today, setToday] = useState("");
   const [remainingTime, setRemainingTime] = useState("");
+  const dispatch = useDispatch();
+  const timings = useSelector((state) => state.prayerTime.timings);
   const avilableCities = [
     {
       displayName: "مكة المكرمة",
@@ -69,7 +66,7 @@ export default function MainContent() {
   ];
 
   useEffect(() => {
-    getTimings();
+    dispatch(prayerTimeApi(selectedCity));
   }, [selectedCity]);
 
   useEffect(() => {
@@ -91,14 +88,6 @@ export default function MainContent() {
     });
     setSelectedCity(city);
   };
-
-  const getTimings = async () => {
-    const response = await axios.get(
-      `https://api.aladhan.com/v1/timingsByCity?country=SA&city=${selectedCity.apiName}`
-    );
-    setTimings(response.data.data.timings);
-  };
-
   const setupCountdownTimer = () => {
     const momentNow = moment();
     let prayerIndex = 0;
